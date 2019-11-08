@@ -44,7 +44,7 @@ all: Lab02_tase
 Lab02_tase: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: Cross G++ Linker'
-	arm-linux-gnueabihf-g++ -L/home/valter/tase/arm/libraries -L/home/valter/tase/arm/sqlite-autoconf-3300100/.libs -o "Lab02_tase" $(OBJS) $(USER_OBJS) $(LIBS)
+	arm-linux-gnueabihf-g++ -L/home/valter/tase/arm/libraries -L/home/valter/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/arm-linux-gnueabihf/libc/lib/arm-linux-gnueabihf -L/home/valter/tase/arm/sqlite-autoconf-3300100/.libs -o "Lab02_tase" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

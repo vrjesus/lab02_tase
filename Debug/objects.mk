@@ -4,5 +4,5 @@
 
 USER_OBJS :=
 
-LIBS := -lwiringPi -lsqlite3
+LIBS := -lwiringPi -lpthread -lsqlite3
 

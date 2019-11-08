@@ -15,12 +15,33 @@
 #include <wiringSerial.h>
 #include <errno.h>
 #include <cstdlib>
+#include <pthread.h>
+#include <signal.h>
 
 using namespace std;
 void Configuration();
 void ClearScreen();
+void* MonitoraSerial(void*);
+
+pthread_t thread1;
+int fd;
+char *ret_cfg_rs232;
+
+void handle_sigint(int sig) {
+	printf("Caught signal %d\n", sig);
+	pthread_cancel(thread1);
+	exit(1);
+}
 
 int main() {
+	ClearScreen();
+	signal(SIGINT, handle_sigint);
+
+	if (pthread_create(&thread1, NULL, &MonitoraSerial, NULL) != 0) {
+		perror("pthread_create() error");
+		exit(1);
+	}
+
 	int option = 0;
 	string menu;
 	do {
@@ -65,6 +86,10 @@ void Configuration() {
 	cout << "- \t 2 - Entre com a taxa de amostragem: ";
 	std::getline(cin, tx_amostra);
 	cout << "--------------------------------------------------" << endl;
+	if (pthread_join(thread1, NULL) != 0) {
+		perror("pthread_create() error");
+		exit(3);
+	}
 	for (int i = 1; i <= 10; i++) {
 		delay(1000);
 		cout << "\r-- Aguardando retorno - : " << i << " segundos"
@@ -79,4 +104,16 @@ void ClearScreen() {
 	 system("clear");
 	 */
 	std::system("clear");
+}
+
+void* MonitoraSerial(void*) {
+	printf("Hello i'm thread ... \n");
+	while (1) {
+		delay(1);
+		while (serialDataAvail(fd)) {
+			printf(" -> %3d", serialGetchar(fd));
+			fflush(stdout);
+		}
+	}
+	pthread_exit(NULL);
 }
